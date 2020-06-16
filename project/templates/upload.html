@@ -1,0 +1,118 @@
+{% extends "flash.html" %}
+
+
+{% block body %}
+    <h2 style="margin-left:10px;">excel上传</h2>
+<hr/>
+{% if dspid %}
+<label style="margin-left:20px;">dspid:</label><text>{{ dspid }}</text>
+{% endif %}
+
+<div >
+    <br/>
+{#    <form>   <button  type="submit" class="file button red" id="tj" οnclick="check()">点击</button></form>#}
+    <form action="" enctype='multipart/form-data' class="form-horizontal required-validate row"  style="margin-left:10px;"  method='POST'>
+        <input type="file"  class="col-md-3" name="file">
+        <input type="submit" class="btn btn-success col-md-0.5" value="上传" >
+
+    </form>
+</div>
+
+
+<script>
+    function loadFile(file){
+    $("#filename").html(file.name);
+}
+    function flaskcall()
+{
+    $.ajax(
+  {
+     type: "POST",
+     url: "/test_post/nn",
+     dataType: "json",
+     success: function(msg)
+     {
+         alert(msg)
+         console.log(msg);
+
+
+     },
+    error: function (xhr, status, error) {
+        console.log(error);
+    }
+
+});
+}
+
+
+    </script>
+<script type="text/javascript">
+    $(function() {
+          $("#btn").click(function(){
+              var data={}
+                $.ajax({
+                url: "test_post/nn",
+                type: "POST",
+                    data:data,
+                dataType: "json",
+
+                success: function (data) {
+                 alert(data.name + ":" + data.age);
+                $("#NAME2").val(data.name);
+                $("#AGE2").val(data.age);
+                console.log(data)}
+
+                })
+            })
+   function check()
+   {
+       var data = {
+        };
+       $.ajax(
+      {
+          type: "GET",
+          url: "/click",
+          data:data,
+          contentType: 'application/json; charset=UTF-8',
+          dataType: 'json',
+          success: function(msg)
+          {
+             alert(msg)
+             alert(JSON.stringify(msg));
+             console.log(msg);
+          },
+          error: function (xhr, status, error) {
+            console.log(error);
+            alert("错误");
+         }
+      });
+   }
+   {#function ajaxForm() {#}
+   {#    var form = new FormData(document.getElementById("test_form"));#}
+   {#    $.ajax({#}
+   {#        url: "{{ url_for('api_upload') }}",#}
+   {#        type: "post",#}
+   {#        data: form,#}
+   {#        dataType: 'json',#}
+   {#        processData: false,#}
+   {#        contentType: false,#}
+   {#        success: function (data) {#}
+   {#            $(img_url_new).attr("src", data.img_url_new);#}
+   {#            $(imgPic).attr("src", data.img_url_new);#}
+   {#        },#}
+   {#        error: function (e) {#}
+   {#            alert("error");#}
+   {#        }#}
+   {#    })#}
+   {#       #}
+   {#       } #}
+
+    })
+</script>
+
+
+
+{% endblock %}
+
+
+

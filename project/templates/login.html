@@ -1,0 +1,43 @@
+{% extends "flash.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="panel panel-default animated fadeInUp">
+                <div class="panel-heading">
+                    <h4 class="panel-title"style="margin-left:100px;">
+                        用户登陆
+                    </h4>
+                </div>
+
+                <div class="panel-body" style="margin-left:100px;">
+                    <form action="{{ url_for('login') }}" method="post" name="login"  class="form" role="form">
+                         {{ form.csrf_token }}
+                        {{ wtf.form_field(form.username) }}
+                        {{ wtf.form_field(form.password) }}
+                        {{ wtf.form_field(form.remember_me) }}
+
+                        <input class="btn btn-success" id="submit" name="submit" type="submit" value="登陆">
+                    </form>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--<form action="{{ url_for('login') }}" method="post" name="login">-->
+      <!--{{ form.csrf_token }}-->
+      <!--<p>-->
+          <!--{{ form.username.label }}-->
+          <!--{{ form.username(size=50) }}<br>-->
+      <!--</p>-->
+      <!--<p>-->
+          <!--{{ form.password.label  }}-->
+          <!--&lt;!&ndash; 我们可以传递input标签的属性，这里传递的是size属性 &ndash;&gt;-->
+          <!--{{ form.password(size=50) }}<br>-->
+      <!--</p>-->
+      <!--<p>记住我:{{ form.remember_me }}</p>-->
+      <!--<p><input type="submit" value="登陆"></p>-->
+<!--</form>-->
+{% endblock %}

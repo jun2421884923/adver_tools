@@ -1,0 +1,45 @@
+{% extends "flash.html" %}
+{% block body %}
+<h3>对外邮件</h3>
+ <p>
+        <label>日期:</label><input type="text" id ="sdate">
+      &nbsp &nbsp <label>媒体id:</label> <input type="text" id ="sellerid">
+ </p>
+<p><button id = "btn" onClick="send_mail()" style="margin-left:100px;width:50px; height:30px" >发送</button></p>
+
+<label>结果如下:</label>
+</br>
+</br>
+<div>
+<textarea id ="res" style="width:1000px;height:400px ;white-space:pre-wrap;
+        word-wrap: break-word;
+        word-break: break-all" ></textarea>
+</div>
+
+
+
+<script type="text/javascript">
+
+
+function send_mail()
+{
+    var sdate=$("#sdate").val()
+    var sellerid=$("#sellerid").val()
+    var data={"sdate":sdate,"sellerid":sellerid}
+       $.ajax({
+                url: "/sendmailout",
+                type: "GET",
+                    data:data,
+                dataType: "json",
+
+                success: function (data) {
+                 <!--alert(data);-->
+                $("#res").val(JSON.stringify(data));
+                console.log(data)}
+
+                })
+}
+
+</script>
+
+{% endblock %}

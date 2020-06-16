@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <title>xiaodu</title>
+</head>
+<body>
+<div class="row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+                <br>
+                {% if h3 %}
+                    <h3>{{h3}}</h3>
+                {% endif %}
+
+            </div>
+            <br/>
+
+  {% if sday %}
+        <p>
+        <label>日期:</label>&nbsp<input type="text" id ="sdate">
+            <button id = "btn" onClick="querydata()" style="margin-left:50px" >查询</button>
+ </p>
+    {% endif %}
+
+            <div class="panel-body">
+                    <table class="table table-striped table-bordered table-hover" style="TABLE-LAYOUT:fixed;WORD-BREAK:break-all">
+                        <thead>
+                        <tr>
+                            {% for i in labels %}
+                            <!--style="word-wrap:break-word;word-break:break-all;"-->
+                                <td  width="100">{{ i }}</td>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for i in content %}
+                            <tr >
+                                {% for j in i %}
+                                    <td  style="WORD-BREAK:break-all" >{{ j }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+
+function querydata()
+{
+    var sdate=$("#sdate").val()
+    if(sdate == ""){
+     alert("查询日期不能为空")
+    return
+    }
+    var datecheck = /^[0-9]{8}$/;
+  if (!datecheck.test(sdate)) {
+   alert("查询日期必须8位数字")
+   return
+  }
+
+    var data={"sdate":sdate}
+
+       $.ajax({
+                url: "/xiaodu/dsptoufang",
+                type: "GET",
+                    data:data,
+                <!--dataType: "json",-->
+
+                success: function (data) {
+                $(document.body).html(data);
+                    <!--alert(data)-->
+                    console.log(data)
+                }
+
+                })
+
+
+
+}
+
+</script>
+</body>
+</html>

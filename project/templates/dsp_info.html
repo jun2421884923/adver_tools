@@ -1,0 +1,285 @@
+{% extends "flash.html" %}
+{%- from "bootstrap/pagination.html" import render_pagination -%}
+<!--<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>-->
+	<!--<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+{% block body %}
+
+ <div class="panel-heading">
+
+     {% if h3 %}
+            <div  class="row container">
+                    <h3 class="col-md-7">{{h3}}</h3>
+                <button  class="btn btn-primary btn-lg"   onclick="return get_edit_info(0,0)" data-toggle="modal" data-target="#addModal">
+	                添加
+                </button>
+                <!--<button id="addbtn" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addModal">-->
+	                <!--添加-->
+                <!--</button>-->
+                <!--<a id="addbtn1" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#addModal">-->
+	                <!--添加-->
+                <!--</a>-->
+            </div>
+
+     {% endif %}
+
+
+ </div>
+    <table class="table table-striped table-hover">
+            <thead>
+                        <tr>
+                            {% for i in labels %}
+                            <!--style="word-wrap:break-word;word-break:break-all;"-->
+                                <td  width="100">{{ i }}</td>
+                            {% endfor %}
+                            <td  width="60" align="left" >操作</td>
+                        </tr>
+            </thead>
+        <tbody>
+        {%- for dsp in pagination.items -%}
+            <tr >
+                <td >{{ dsp.dspid }}</td>
+                <td class="hidden-xs">{{ dsp.buyerid }}</td>
+                <td class="hidden-xs">{{ dsp.name }}</td>
+                <td class="hidden-xs">
+                     {% if  dsp.isvalid  == 1 %}
+                    <font color="green">有效</font>
+                        {% elif  dsp.isvalid  == 0 %}
+                           <font color="red"> 无效</font>
+                        {% endif %}
+
+
+                </td>
+                {%- if current_user.is_authenticated -%}
+                    <td >
+                        <!--<a type="button" class="btn btn-info"-->
+                           <!--href="{{ url_for('_add_dsp') }}">修改</a>-->
+                     <button type="button" class="btn btn-info" data-toggle="modal" onclick="return  get_edit_info({{dsp.dspid}},{{dsp.buyerid}}  )" data-target="#addModal">编辑</button>
+            &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn btn-danger" onclick="del_dspid({{dsp.dspid}},{{dsp.buyerid}} )">删除</button>
+                    </td>
+                {%- endif -%}
+            </tr>
+        {%- endfor -%}
+        </tbody>
+    </table>
+
+
+{% import "page.html" as pg %}
+{{pg.my_paginate(pagination,'_show_dsp_page')}}
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					dsp信息
+				</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label  class="col-sm-3 control-label">dspid</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="dspid" name="dspid" value=""
+                                       placeholder="请输入dspid">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label  class="col-sm-3 control-label">客户id</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="buyerid" name="buyerid" value=""
+                                       placeholder="请输入客户id">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label  class="col-sm-3 control-label">dsp名</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="dspname" name="dspname" value=""
+                                       placeholder="请输入dsp名字">
+                            </div>
+                        </div>
+                         <div class="form-group">
+                            <label  class="col-sm-3 control-label">是否有效</label>
+                            <div class="col-sm-7">
+                                <!--<input type="text" class="form-control" id="isvalid" name="isvalid" value=""-->
+                                       <!--placeholder="是否有效">-->
+                                 <select class="selectpicker form-control" id="isvalid" data-style="btn-primary">
+                                     <option value="1">有效</option>
+                                      <option value="0">无效</option>
+                                    </select>
+                            </div>
+                        </div>
+
+                    </form>
+			</div>
+			<div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="adddsp()">
+					提交
+				</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭
+				</button>
+
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+
+<script type="text/javascript">
+function del_dspid(dspid,buyerid){
+ $.ajax(
+                {
+                    url: "/deletedspinfo",
+                    data:{"dspid":dspid,"buyerid":buyerid},
+                    type: "GET",
+                    dataType: "json",
+                    success:function(data)
+                    {
+                       alert(data.data.list)
+                       <!--window.location.href="{{request.fullpath}}";-->
+                        window.location.reload();
+
+                    },
+                    error:function()
+                    {
+                        alert('请求出错');
+                    },
+                    complete:function()
+                    {
+                        // $('#tips').hide();
+                    }
+                });
+
+
+
+
+
+ }
+ function adddsp(){
+    var dspid=$("#dspid").val()
+    var buyerid=$("#buyerid").val()
+    var dspname=$("#dspname").val()
+    var isvalid=$("#isvalid").val()
+    if (dspid=="" || buyerid=="" || dspname=="" ||isvalid=="")
+    {
+        alert("填写信息不能为空")
+        return ;
+    }
+    var data={"dspid":dspid,"buyerid":buyerid,"dspname":dspname,"isvalid":isvalid}
+       $.ajax({
+                url: "/add_dsp",
+                type: "GET",
+                data:data,
+                dataType: "json",
+
+                success: function (data) {
+                 alert(data.data.list);
+
+                 $('#addModal').modal('hide')
+                 window.location.reload();
+
+                <!--$("#res").val(JSON.stringify(data));-->
+                console.log(data)
+                }
+                })
+ }
+ function get_edit_info(dspid,buyerid)
+    {
+        console.log(dspid)
+        if (dspid==0 || !dspid){
+            $("#dspid").val("");
+            $("#dspname").val("");
+            $("#buyerid").val("");
+            document.getElementById("myModalLabel").innerHTML = "添加dsp";
+            $("#isvalid").val("1");
+            <!--document.getElementById("isvalid").readOnly=true;-->
+            document.getElementById("isvalid").disabled=true;
+            return;
+        }
+        else{
+        $.ajax(
+                {
+                    url: "/getdspinfo",
+                    data:{"dspid":dspid,"buyerid":buyerid},
+                    type: "get",
+
+                    success:function(data)
+                    {
+                        if(data)
+                        {
+
+                            // 赋值
+                            $("#dspid").val(data.dspid);
+                            $("#buyerid").val(data.buyerid);
+                            $("#dspname").val(data.name);
+                            $("#isvalid").val(data.isvalid);
+
+
+                        }
+                        else
+                        {
+                            <!--$("#tip").html("<span style='color:red'>失败，请重试</span>");-->
+                            alert('请求dspid失败'+dspid);
+                        }
+                    },
+                    error:function()
+                    {
+                        alert('请求出错');
+                    },
+                    complete:function()
+                    {
+                        // $('#tips').hide();
+                    }
+                });
+
+
+            document.getElementById("myModalLabel").innerHTML = "修改dsp";
+            <!--document.getElementById("isvalid").readOnly=false;-->
+            document.getElementById("isvalid").disabled=false;
+
+            return  ;
+
+        }
+
+
+
+
+    }
+$(function () {
+  $('#addbtn').click(function () {
+            $('#addModal').modal('show')
+        });
+   $('#addbtn1').click(function () {
+            $('#addModal').modal('show')
+        });
+})
+
+function send_mail()
+{
+    var sdate=$("#sdate").val()
+    var sellerid=$("#sellerid").val()
+    var data={"sdate":sdate,"sellerid":sellerid}
+       $.ajax({
+                url: "/sendmailout",
+                type: "GET",
+                    data:data,
+                dataType: "json",
+
+                success: function (data) {
+                 <!--alert(data);-->
+                $("#res").val(JSON.stringify(data));
+                console.log(data)}
+
+                })
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "flash.html" %}
+{% block body %}
+<h3 style="margin-left:20px">页面集合</h3>
+</br>
+<table class="table table-striped table-hover animated fadeInDown">
+
+
+        <tbody>
+        {% for page,path in pages.items() %}
+            <tr class="animated fadeInLeft delay-{{ loop.index0 }}">
+
+                <td class="hidden-xs"><font size="4">{{ page }}</font></td>
+                <td><a class="btn btn-success"
+                       href="{{ url_for('_select',pathid=path ) }}"
+                       >
+                    点击前往
+                </a></td>
+
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
